@@ -144,7 +144,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__description__)
 
     # Instances
-    parser.add_argument('-i', '--instances', default=['default'], nargs=argparse.ONE_OR_MORE,
+    parser.add_argument('-p', '--profile', default=['default'], nargs=argparse.ONE_OR_MORE,
                         action='store', dest='profiles', choices=aws.session.Session().available_profiles,
                         metavar='NAME',
                         help='profile name, '
