@@ -28,8 +28,9 @@ Setup a python script to access multiple aws accounts with:
 ### blank_threaded:
 
 Setup a multithreading python script with:
-Logging, with colour output and log rotation
-Threaded function
+- Logging, with colour output and log rotation
+- Threaded function
+- Progress bar
 
 ![New Doc](media/blank_multithreaded.png)
 
