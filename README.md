@@ -7,25 +7,27 @@
 
 Setup a basic python script with:
 - Logging, with colour output and log rotation
+![New Doc](media/blank.png)
 
 ### blank_aws_1:
 
 Setup a python script to access a aws account with:
 - Boto3, command line parameters to choose account and regions
 - Logging, with colour output and log rotation
-
+![New Doc](media/blank_aws.png)
 ### blank_aws_2:
 
 Setup a python script to access multiple aws accounts with:
 - Boto3, command line parameters to choose accounts and regions
 - Logging, with colour output and log rotation
-
+![New Doc](media/blank_aws.png)
 
 ### blank_threaded:
 
 Setup a multithreading python script with:
 Logging, with colour output and log rotation
 Threaded function
+![New Doc](media/blank_multithreaded.png)
 
 ## How to use:
 
