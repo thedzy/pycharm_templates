@@ -14,13 +14,14 @@ __description__ = \
 
 #set($include = "starting value so your not prompted with variable")
 
-#set($param = "starting value so your not prompted with variable")
-#set($value = "starting value so your not prompted with variable")
-#macro(defaultValue $param $value)
-#if ($param != "")
-$value
+#set($requiredParam = "")
+#set($optionalParam = "")
+
+#macro(setDefaults $requiredParam $optionalParam)
+#if($requiredParam && !$requiredParam.isEmpty())
+$requiredParam
 #else
-$param
+$optionalParam
 #end
 #end
 
@@ -125,11 +126,11 @@ def create_logger(name: str = __file__, levels: dict = {}) -> logging.Logger:
 
     # Set file handler
     if options.output:
-        log_size_mb = #defaultValue($Log_Size_MB 5)
+        log_size_mb = #setDefaults($Log_Size_MB 5)
         log_size = log_size_mb * 1024 * 1024
         log_file_handle = RotatingFileHandler(options.output,
                                               maxBytes=log_size,
-                                              backupCount=#defaultValue($Backup_Count 0)
+                                              backupCount=#setDefaults($Backup_Count 0)
                                               )
         log_file_handle.setFormatter(logging.Formatter(log_format, style='{'))
         new_logger.addHandler(log_file_handle)
