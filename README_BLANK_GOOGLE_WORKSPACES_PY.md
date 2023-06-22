@@ -57,7 +57,7 @@ def main() -> None:
         'https://www.googleapis.com/auth/admin.directory.user',
         'https://www.googleapis.com/auth/spreadsheets',
     ]
-    credentials = auth_google(scopes, options.google_credentials, options.save_credentials
+    credentials = auth_google(scopes, options.google_credentials, options.save_credentials)
     if not credentials:
         logger.critical('Unable to authenticate')
         exit(1)
