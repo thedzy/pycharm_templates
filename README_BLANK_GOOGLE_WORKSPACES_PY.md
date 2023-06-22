@@ -57,7 +57,7 @@ def main() -> None:
         'https://www.googleapis.com/auth/admin.directory.user',
         'https://www.googleapis.com/auth/spreadsheets',
     ]
-    credentials = auth_google(scopes, options.google_credentials, False)
+    credentials = auth_google(scopes, options.google_credentials, options.save_credentials
     if not credentials:
         logger.critical('Unable to authenticate')
         exit(1)
@@ -65,6 +65,8 @@ def main() -> None:
     # Create the Google Sheets APIs
     sheets = build('sheets', 'v1', credentials=credentials)
     admin = build('admin', 'directory_v1', credentials=credentials)
+    
+    # TODO: code
 
     logger.note('Done')
 
