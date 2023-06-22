@@ -32,7 +32,7 @@ Setup a python script to access a AWS account with:
 
 ![New Doc](media/blank_aws.png)
 
-[More detail](README_BLANK_PY_AWS.md)
+[More detail](README_BLANK_AWS_PY.md)
 
 ## blank_aws_2.py:
 
@@ -43,7 +43,7 @@ Setup a python script to access multiple AWS accounts with:
 
 ![New Doc](media/blank_aws.png)
 
-[More detail](README_BLANK_PY_AWS.md)
+[More Detail](README_BLANK_AWS_PY.md)
 
 
 ## blank_google_workspaces.py:
@@ -55,4 +55,16 @@ Setup a python script to access Googles API:
 
 ![New Doc](media/blank_google_workspace.png)
 
-[More detail](README_GOOGLE_WORKSPACES_PY.md)
+[More detail](README_BLANK_GOOGLE_WORKSPACES_PY.md)
+
+## blank_threaded.py:
+
+Setup a multithreading python script with:
+
+- Logging, with colour output and log rotation
+- Threaded function
+- Progress bar
+
+![New Doc](media/blank_multithreaded.png)
+
+[More detail](README_BLANK_THREADED_PY.md)
