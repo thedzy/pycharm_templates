@@ -1,6 +1,7 @@
 class ProgressBar:
     """
     Create progress bar
+    v1.1 Fixed colours
     """
 
     def __init__(self, max_size: int = 100, title: str = '',
@@ -49,12 +50,6 @@ class ProgressBar:
         self.light = light_rgb
         self.dark = dark_rgb
 
-
-        # Get width and fill size
-        self.item_of_len = len(str(max_size))
-        percent_padding, side_padding, len_of_padding = 4, 2, (self.item_of_len * 2) + 1
-        self.progress_width = columns - percent_padding - side_padding - len_of_padding
-
         # Set the size of the bar
         if columns is None:
             try:
@@ -64,6 +59,11 @@ class ProgressBar:
                 self.columns = 100
         else:
             self.columns = columns
+
+        # Get width and fill size
+        self.item_of_len = len(str(max_size))
+        percent_padding, side_padding, len_of_padding = 4, 2, (self.item_of_len * 2) + 1
+        self.progress_width = self.columns - percent_padding - side_padding - len_of_padding
 
         self.draw(self.__position, title)
 
@@ -82,7 +82,7 @@ class ProgressBar:
         self.__del__()
 
     def __calculate_text_colour(self):
-        light, dark = (self.__background, self.__foreground) if self.__invert else (
+        light, dark = (
             self.get_colour(*self.__dark_rgb), self.get_colour(*self.__light_rgb))
 
         self.__foreground_text = light if self.colour_contrast(*self.__foreground_rgb) > 0.5 else dark
@@ -125,6 +125,14 @@ class ProgressBar:
         self.__background_rgb = rgb
         self.__background = self.get_colour(*self.__background_rgb)
         self.__calculate_text_colour()
+
+    @property
+    def width(self) -> int:
+        """
+        Get the progress width
+        :return: (int)
+        """
+        return self.columns
 
     @property
     def invert(self) -> bool:
@@ -207,9 +215,16 @@ class ProgressBar:
         fill = progress_text[0:progress_filled]
         empty = progress_text[progress_filled:self.columns]
 
+        if self.__invert:
+            foreground_text = self.__background
+            background_text = self.__foreground
+        else:
+            foreground_text = self.__foreground_text
+            background_text = self.__background_text
+
         # Print
         print(
-            f'\033[48;5;{self.__foreground_text}m\033[38;7m\033[38;5;{self.__foreground:0.0f}m{fill}\033[48;5;{self.__background_text}m\033[38;5;{self.__background:0.0f}m{empty}\033[0m',
+            f'\033[48;5;{foreground_text}m\033[38;7m\033[38;5;{self.__foreground:0.0f}m{fill}\033[48;5;{background_text}m\033[38;5;{self.__background:0.0f}m{empty}\033[0m',
             end='\r',
             flush=True)
 
@@ -266,7 +281,7 @@ class ProgressBar:
             ansi_code = 232 + (int(red * grey_shades))
         else:
             # If colour
-            ansi_code = (16 + int(36 * red * 5) + int(6 * green * 5) + int(blue * 5))
+            ansi_code = 16 + (36 * int(red * 5)) + (6 * int(green * 5)) + int(blue * 5)
 
         return ansi_code
 
