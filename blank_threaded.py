@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
-__author__ = 'Shane Young'
+__author__ = 'thedzy'
+__copyright__ = 'Copyright 2024, thedzy'
+__license__ = 'GPL'
 __version__ = '1.0'
-__email__ = 'thedzy@thedzy.com'
+__maintainer__ = 'thedzy'
+__email__ = 'thedzy@hotmail.com'
+__status__ = 'Development'
 __date__ = '${YEAR}-${MONTH}-${DAY}'
-__credits__ = ''
-
 __description__ = \
     """
     ${FILE_NAME}: 
@@ -25,10 +27,10 @@ $optionalParam
 #end
 #end
 
-
 import argparse
 import collections
 import logging
+import logging.config
 from logging.handlers import RotatingFileHandler
 import os
 from pathlib import Path
@@ -36,12 +38,20 @@ import pprint
 import random
 import threading
 import time
+from pathlib import Path
 from typing import Optional
+
 #foreach($include in $Includes.split(","))
 #if(($include) && ($include != ""))
 import $include
 #end
 #end
+
+import google.auth.exceptions
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
 
 
 #parse("ThreadManager")
@@ -51,7 +61,7 @@ import $include
 #parse("ProgressBar")
 
 def main() -> None:
-    logger.note('Start')
+    logger.info('Start')
 
     start_time = time.time()
     loop_low, loop_high = 10, 500
@@ -90,7 +100,7 @@ def main() -> None:
     print(f'Should have taken   {total_time / 60:9.1f}m')
     print(f'Actual time taken   {time.time() - start_time:9.1f}s')
 
-    logger.note('Done')
+    logger.info('Done')
 
 
 def random_sleep(thread_number, low, high):
@@ -101,39 +111,97 @@ def random_sleep(thread_number, low, high):
     return thread_number, timer_sleep
 
 
-def create_logger(name: str = __file__, levels: dict = {}) -> logging.Logger:
+def auth_google(scopes: list, credentials_json: str, save_json: bool = False) -> Credentials:
     """
-    Create a logger
-    :param name: (str) Name of logger
-    :param levels: (dict) Custom log levels
-    :return: (logging.Logger) Logger
+    Authenticate with Google Workspaces API
+    :param scopes: List of scopes to authenticate with
+    :param credentials_json: Json file with credentials
+    :param save_json: Save scope and token to json file
+    :return: Credentials object
     """
+    credentials_file = Path(__file__).parent.joinpath(credentials_json.name)
+    # Check if credentials file already contains credentials and token
+    try:
+        credentials = Credentials.from_authorized_user_file(credentials_file, scopes)
+        if credentials.expired and credentials.refresh_token:
+            credentials.refresh(Request())
+        return credentials
+    except ValueError:
+        try:
+            logger.info('Web credentials not found, attempting to generate new ones')
+            flow = InstalledAppFlow.from_client_secrets_file(credentials_file, scopes)
+            credentials = flow.run_local_server(port=0)
 
+            # Save the credentials for the next run and skip web auth
+            if save_json:
+                credentials_json.write(credentials.to_json())
+            return credentials
+        except ValueError as err:
+            logger.error(f'Error processing credentials: {err}', exc_info=True)
+            return None
+        except Exception as err:
+            logger.critical(f'Unknown error: {err.args}', exc_info=True)
+    except google.auth.exceptions.RefreshError as err:
+        logger.error(f'Error refreshing credentials: {err.args[1].get("error_description")}')
+        return None
+    except Exception as err:
+        logger.critical(f'Unknown error: {err.args}', exc_info=True)
+
+    return None
+
+def create_logger(name: str = __file__, levels: dict = {}) -> logging.Logger:
     # Create log level
     def make_log_level(level_name: str, level_int: int) -> None:
         logging.addLevelName(level_int, level_name.upper())
         setattr(new_logger, level_name, lambda *args: new_logger.log(level_int, *args))
 
-    # Setup logging
     new_logger = logging.getLogger(name)
-    new_logger.setLevel(options.debug)
 
-    # Create stream handler
-    log_stream_handle = logging.StreamHandler()
-    log_format = '[{asctime}] [{levelname:8}] {message}'
-    log_stream_handle.setFormatter(ColourFormat('{message}', style='{', levels={20: 16, 21: 92}))
-    new_logger.addHandler(log_stream_handle)
+    logging_config = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'formatters': {
+            'stderr': {
+                '()': ColourFormat,
+                'style': '{', 'format': '{message}',
+            },
+            'file': {
+                'style': '{', 'format': '[{asctime}] [{levelname:8}] {message}'
+            }
+        },
+        'handlers': {
+            'stderr': {
+                'class': 'logging.StreamHandler',
+                'formatter': 'stderr',
+                'stream': 'ext://sys.stderr',
+            },
+            'file': {
+                'class': 'logging.handlers.RotatingFileHandler',
+                'formatter': 'file',
+                'filename': options.log_file if options.log_file else '/dev/null',
+                'maxBytes': 1024 * #setDefaults($Log_Size_MB 5),
+                'backupCount': #setDefaults($Backup_Count 0)
+            }
+        },
+        'loggers': {
+            'root': {
+                'handlers': [
+                    'stderr'
+                ]
+            },
+            name: {
+                'level': 10 if options.debug else 20,
+                'handlers': [
+                    'stderr'
+                ]
+            }
+        }
+    }
 
-    # Set file handler
-    if options.output:
-        log_size_mb = #setDefaults($Log_Size_MB 5)
-        log_size = log_size_mb * 1024 * 1024
-        log_file_handle = RotatingFileHandler(options.output,
-                                              maxBytes=log_size,
-                                              backupCount=#setDefaults($Backup_Count 0)
-                                              )
-        log_file_handle.setFormatter(logging.Formatter(log_format, style='{'))
-        new_logger.addHandler(log_file_handle)
+    if options.log_file is not None:
+        logging_config['loggers'][name]['handlers'].append('file')
+
+    logging.config.dictConfig(logging_config)
 
     # Create custom levels
     for level in levels.items():
@@ -146,29 +214,32 @@ if __name__ == '__main__':
     def valid_path(path):
         parent = Path(path).parent
         if not parent.is_dir():
-            print(f'{parent} is not a directory, make it?')
-            if input('y/n: ').lower() == 'y':
+            print(f'{parent} is not a directory, make it?', end=' ')
+            if input('y/n: ').lower()[0] == 'y':
                 parent.mkdir(parents=True, exist_ok=True)
-                Path(path)
-            raise argparse.ArgumentTypeError(f'{path} is not a directory')
+                return Path(path)
+            raise argparse.ArgumentTypeError(f'{path} is an invalid path')
         return Path(path)
+
 
     # Create argument parser
     parser = argparse.ArgumentParser(description=__description__)
 
-    # Debug option
-    parser.add_argument('--debug', default=20,
-                        action='store_const', dest='debug', const=10,
+
+    # Debug/verbosity option
+    parser.add_argument('--debug', default=False,
+                        action='store_true', dest='debug',
                         help=argparse.SUPPRESS)
 
     # Output
-    parser.add_argument('-o', '--output', type=valid_path, default=None,
-                        action='store', dest='output',
+    parser.add_argument('--log', type=valid_path,
+                        default=None,
+                        action='store', dest='log_file',
                         help='output log')
 
     options = parser.parse_args()
 
-    logger = create_logger(levels={'note': 21})
+    logger = create_logger()
     logger.debug('Debug ON')
     logger.debug(pprint.pformat(options))
 
