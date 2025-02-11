@@ -1,0 +1,15 @@
+# Ignore everything by default
+*
+
+# Allow the ignore file
+!.gitignore
+
+# Allow files that start with README (README, README.md, README.txt, etc.)
+!README*
+
+# Allow files that start with 'blank'
+!blank*
+
+# Allow the directories "include" and "media"
+!include/
+!media/
