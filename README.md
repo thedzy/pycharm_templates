@@ -14,7 +14,7 @@
 
 ## blank.py:
 
-Setup a basic python script with:
+Set up a basic python script with:
 
 - Logging, with colour output and log rotation
 
@@ -25,7 +25,7 @@ Setup a basic python script with:
 
 ## blank_aws_1.py:
 
-Setup a python script to access a AWS account with:
+Set up a python script to access a AWS account with:
 
 - Boto3, command line parameters to choose account and regions
 - Logging, with colour output and log rotation
@@ -36,7 +36,7 @@ Setup a python script to access a AWS account with:
 
 ## blank_aws_2.py:
 
-Setup a python script to access multiple AWS accounts with:
+Set up a python script to access multiple AWS accounts with:
 
 - Boto3, command line parameters to choose accounts and regions
 - Logging, with colour output and log rotation
@@ -48,7 +48,7 @@ Setup a python script to access multiple AWS accounts with:
 
 ## blank_google_workspaces.py:
 
-Setup a python script to access Googles API:
+Set up a python script to access Googles API:
 
 - Google json credentials for authentication
 - Logging, with colour output and log rotation
@@ -59,7 +59,7 @@ Setup a python script to access Googles API:
 
 ## blank_threaded.py:
 
-Setup a multithreading python script with:
+Set up a multithreading python script with:
 
 - Logging, with colour output and log rotation
 - Threaded function
@@ -68,3 +68,9 @@ Setup a multithreading python script with:
 ![New Doc](media/blank_multithreaded.png)
 
 [More detail](README_BLANK_THREADED_PY.md)
+
+## blank_shell.py:
+
+Set up a shell script with coloured logging and an exit trap:
+
+- Logging, with colour output
