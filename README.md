@@ -22,7 +22,6 @@ Set up a basic python script with:
 
 [More detail](README_BLANK_PY.md)
 
-
 ## blank_aws_1.py:
 
 Set up a python script to access a AWS account with:
@@ -44,7 +43,6 @@ Set up a python script to access multiple AWS accounts with:
 ![New Doc](media/blank_aws.png)
 
 [More Detail](README_BLANK_AWS_PY.md)
-
 
 ## blank_google_workspaces.py:
 
@@ -69,8 +67,25 @@ Set up a multithreading python script with:
 
 [More detail](README_BLANK_THREADED_PY.md)
 
-## blank_shell.py:
+## blank_shell.bash:
 
 Set up a shell script with coloured logging and an exit trap:
 
-- Logging, with colour output
+- Logging, with colour output \
+  [More detail](README_BLANK_SHELL.md)
+
+## blank_shell_getops_params.bash:
+
+- blank_shell with getopts parsing \
+  [More detail](README_BLANK_SHELL.md)
+
+## blank_shell_stdin_params.bash:
+
+- blank_shell with stdin parsing \
+  [More detail](README_BLANK_SHELL.md)
+
+## blank_shell_undefined_params.bash:
+
+- blank_shell with undefined parameters parsing \
+  [More detail](README_BLANK_SHELL.md)
+
