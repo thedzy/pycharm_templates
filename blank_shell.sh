@@ -79,34 +79,35 @@ function colour() {
 
 # Function for logging
 function logging.debug() {
-    colour "90" DEBUG $*
+    colour "90" DEBUG "$(printf "${@}")"
 }
 
 function logging.info() {
-    colour "92" INFO $*
+    colour "92" INFO "$(printf "${@}")"
 }
 
 function logging.warning() {
-    colour "93" WARNING $*
+    colour "93" WARNING "$(printf "${@}")"
 }
 
 function logging.error() {
-    colour "91" ERROR $*
+    colour "91" ERROR "$(printf "${@}")"
 }
 
 function logging.critical() {
-    colour "97;41" CRITICAL $*
+    colour "97;41" CRITICAL "$(printf "${@}")"
     exit 1
 }
+
 ]]#
 
 #header ('Main')
 #[[
-logging.debug debug message
-logging.info info message
-logging.warning warning message
-logging.error error message
-logging.critical critical message
+logging.debug "debug message"
+logging.info "info message"
+logging.warning "warning message"
+logging.error "error message"
+logging.critical "critical message"
 
 exit 0
 ]]#
